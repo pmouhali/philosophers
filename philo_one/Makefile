@@ -1,6 +1,6 @@
 FLAGS = -Wall -Wextra -Werror
 
-SRCS = ft_strlen.c simulation_init.c message.c elapsed_time.c 
+SRCS = ft_atoi.c ft_strlen.c simulation_init.c message.c elapsed_time.c 
 
 HEADER = philosophers.h
 
