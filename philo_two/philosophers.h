@@ -9,22 +9,20 @@
 #include <string.h>
 #include <stdint.h>
 #include <sys/time.h>
+#include <sys/sem.h>
 
 #include <stdio.h>
 
 #define FALSE 0
 #define TRUE  1
 
+#define THREADS_MAX 10000
 #define USAGE "Usage: ./philoX <philosophers> <time to die> <time to eat> <time to sleep> <Optional: how many time each must eat for the simulation to stop>\n"
-
-#define LEFT_FORK(n)  n - 1 == simulation.n_philosophers - 1 ? 0 : (n - 1) + 1
-#define RIGHT_FORK(n) n - 1
 
 enum	e_states
 {
 	TAKING_FORK,
 	EATING,
-	GIVING_FORK,
 	SLEEPING,
 	THINKING,
 	DEAD
@@ -32,14 +30,13 @@ enum	e_states
 
 typedef struct	s_simulation_data
 {
-	int				n_philosophers;                                                
-	int				forks;                                                
-	unsigned char			*table;
+	unsigned int				n_philosophers;                                                
+	unsigned int				forks;                                                
 	unsigned char				stop;
 	unsigned long	time_to_die;
 	unsigned long	time_to_eat;
 	unsigned long	time_to_sleep;  
-	int				meals_per_philosopher_before_stop;
+	unsigned int				meals_per_philosopher_before_stop;
 	unsigned char			*meals_per_philosopher;
 	struct timeval	start;
 
@@ -52,5 +49,6 @@ void			message(int n, int state);
 int     simulation_init(t_simulation_data *sim, int ac, char **av);
 size_t	ft_strlen(const char *s);
 int	ft_atoi(const char *str);
+void    simulation_delete(void *t1, void *t2, pthread_mutex_t *mutex);
 
 #endif
