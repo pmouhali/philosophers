@@ -9,13 +9,16 @@
 #include <string.h>
 #include <stdint.h>
 #include <sys/time.h>
-#include <sys/sem.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <semaphore.h>
 
 #include <stdio.h>
 
 #define FALSE 0
 #define TRUE  1
 
+#define SEMKEY "/semkey"
 #define THREADS_MAX 10000
 #define USAGE "Usage: ./philoX <philosophers> <time to die> <time to eat> <time to sleep> <Optional: how many time each must eat for the simulation to stop>\n"
 
@@ -49,6 +52,6 @@ void			message(int n, int state);
 int     simulation_init(t_simulation_data *sim, int ac, char **av);
 size_t	ft_strlen(const char *s);
 int	ft_atoi(const char *str);
-void    simulation_delete(void *t1, void *t2, pthread_mutex_t *mutex);
+void    simulation_delete(void *t1, void *t2, sem_t *semaphore);
 
 #endif

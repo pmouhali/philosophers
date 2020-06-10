@@ -2,7 +2,7 @@
 
 #include "philosophers.h"
 
-static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+sem_t *semaphore;
 
 void	check_for_death(int n, struct timeval last_meal)
 {
@@ -11,9 +11,9 @@ void	check_for_death(int n, struct timeval last_meal)
 	gettimeofday(&now, NULL);
 	if (elapsed_time(last_meal, now) > simulation.time_to_die)
 	{
-		pthread_mutex_lock(&mutex); // MUTEX
+		sem_wait(semaphore); // SEMAPHORE
 		simulation.stop = TRUE;
-		pthread_mutex_unlock(&mutex); // MUTEX
+		sem_post(semaphore); // SEMAPHORE
 		message(n, DEAD);
 	}
 }
@@ -52,22 +52,22 @@ void	philosopher_think(int n)
 
 int		philosopher_eat(int n, struct timeval *last_meal)
 {
-	pthread_mutex_lock(&mutex); // MUTEX
+	sem_wait(semaphore); // SEMAPHORE
 	if (simulation.forks >= 2)
 	{	
 		simulation.forks -= 2;
 		simulation.meals_per_philosopher[n - 1] += 1;
-		pthread_mutex_unlock(&mutex); // MUTEX
+		sem_post(semaphore); // SEMAPHORE
 		message(n, TAKING_FORK);
 		message(n, EATING);
 		gettimeofday(last_meal, NULL);
 		usleep(simulation.time_to_eat * 1000);
-		pthread_mutex_lock(&mutex); // MUTEX
+		sem_wait(semaphore); // SEMAPHORE
 		simulation.forks += 2;
-		pthread_mutex_unlock(&mutex); // MUTEX
+		sem_post(semaphore); // SEMAPHORE
 		return (TRUE);
 	}
-	pthread_mutex_unlock(&mutex); // MUTEX
+	sem_post(semaphore); // SEMAPHORE
 	return (FALSE);
 }
 
@@ -99,6 +99,12 @@ int		main(int ac, char *av[])
 
 	if (simulation_init(&simulation, ac, av))
 		return (EXIT_FAILURE);
+	if ((semaphore = sem_open(SEMKEY, O_CREAT, S_IRWXU, 1)) == SEM_FAILED)
+	{
+		simulation_delete(NULL, NULL, NULL);
+		return (EXIT_FAILURE);
+	}
+	sem_unlink(SEMKEY);
 	philosopher_ids = malloc(sizeof(int*) * simulation.n_philosophers);
 	thread_ids = malloc(sizeof(pthread_t*) * simulation.n_philosophers);
 	i = -1;
@@ -110,6 +116,6 @@ int		main(int ac, char *av[])
 	i = -1;
 	while (++i < simulation.n_philosophers)
 		pthread_join(thread_ids[i], NULL);
-	simulation_delete(thread_ids, philosopher_ids, &mutex);
+	simulation_delete(thread_ids, philosopher_ids, semaphore);
 	return (EXIT_SUCCESS);
 }
