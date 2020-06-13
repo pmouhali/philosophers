@@ -18,6 +18,9 @@ int		simulation_init(t_simulation_data *sim, int ac, char **av)
 	sim->meals_per_philosopher_before_stop = ac > 5 ? ft_atoi(av[5]) : 0;
 	sim->stop = FALSE;
 	sim->forks = sim->n_philosophers;
+	sim->table = malloc(sizeof(char*) * (sim->n_philosophers + 1));
+	sim->table[sim->n_philosophers] = 0;
+	memset(sim->table, 1, sizeof(char) * sim->n_philosophers);
 	sim->meals_per_philosopher = malloc(sizeof(char) * (sim->n_philosophers + 1));
 	memset(sim->meals_per_philosopher, 0, sizeof(char) * (sim->n_philosophers + 1));
 	gettimeofday(&(sim->start), NULL);

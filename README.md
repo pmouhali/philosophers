@@ -1,11 +1,9 @@
 ## Philosophers
 
+https://fr.wikipedia.org/wiki/D%C3%AEner_des_philosophes
+
 ### TODO:
 
-- all: remplacer pthread_exit() par un simple return(), elle est pas autorisée !
-- philo_one :
-	- problème de logique : si il y a un seul pilosophe il meurt car il n'y a qu'une seule fourchette et il doit se servrir de 2 fourchettes pour manger
-	- utiliser create_threads et wait_threads dans le main pour plus de lisibilité
 - philo_three
 - more tests
 - norminette 
@@ -37,3 +35,8 @@ https://mtodorovic.developpez.com/linux/programmation-avancee/?page=page_4#L4-4-
 
 Stop the waiting :
 https://stackoverflow.com/questions/47317048/how-to-exit-from-thread-which-is-suspended-by-semaphore
+
+### philo_three : processus et semaphores
+
+Semaphores with Process :
+https://www.blaess.fr/christophe/2011/10/09/efficacite-des-ipc-semaphore-et-memoire-partagee/

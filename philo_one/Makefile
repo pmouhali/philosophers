@@ -6,14 +6,12 @@ HEADER = philosophers.h
 
 OBJS = $(SRCS:.c=.o)
 
-PHILO1 = philo_one
-PHILO2 = philo_two
-PHILO3 = philo_three
+NAME = philo_one
 
-$(PHILO1): $(HEADER) $(SRCS) main_philo_one.c
-		gcc $(FLAGS) $(SRCS) main_philo_one.c -o $(PHILO1) -lpthread
+$(NAME): $(HEADER) $(SRCS) main.c
+		gcc $(FLAGS) $(SRCS) main.c -o $(NAME) -lpthread
 
-all: $(PHILO1)
+all: $(NAME)
 
 clean:
 		rm -f $(OBJS)

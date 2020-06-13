@@ -23,17 +23,14 @@ void	check_for_end_of_simulation(void)
 	int i;
 
 	if (simulation.stop == TRUE)
-		pthread_exit(NULL);
+		return ;
 	if (simulation.meals_per_philosopher_before_stop > 0)
 	{
 		i = 0;
 		while (simulation.meals_per_philosopher[i] >= simulation.meals_per_philosopher_before_stop)
 			i++;
 		if (i == simulation.n_philosophers)
-		{
 			simulation.stop = TRUE;
-			pthread_exit(NULL);
-		}
 	}
 }
 
@@ -90,7 +87,7 @@ void	*philosophing(void *arg)
 		else
 			check_for_death(n, last_meal);
 	}
-	pthread_exit(NULL);
+	return (NULL);
 }
 
 int		main(int ac, char *av[])
@@ -101,8 +98,6 @@ int		main(int ac, char *av[])
 
 	if (simulation_init(&simulation, ac, av))
 		return (EXIT_FAILURE);
-	simulation.table = malloc(sizeof(char*) * simulation.n_philosophers);
-	memset(simulation.table, 1, sizeof(char) * simulation.n_philosophers);
 	philosopher_ids = malloc(sizeof(int*) * simulation.n_philosophers);
 	thread_ids = malloc(sizeof(pthread_t*) * simulation.n_philosophers);
 	i = -1;

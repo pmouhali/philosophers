@@ -18,7 +18,7 @@
 #define USAGE "Usage: ./philoX <philosophers> <time to die> <time to eat> <time to sleep> <Optional: how many time each must eat for the simulation to stop>\n"
 
 #define LEFT_FORK(n)  n - 1 == simulation.n_philosophers - 1 ? 0 : (n - 1) + 1
-#define RIGHT_FORK(n) n - 1
+#define RIGHT_FORK(n) n - 1 == 0 && simulation.n_philosophers == 1 ? 1 : (n - 1)
 
 enum	e_states
 {
