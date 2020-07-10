@@ -4,7 +4,6 @@ https://fr.wikipedia.org/wiki/D%C3%AEner_des_philosophes
 
 ### TODO:
 
-- philo_three
 - more tests
 - norminette 
 
