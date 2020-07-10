@@ -4,7 +4,7 @@
 
 int		simulation_init(t_simulation_data *sim, int ac, char **av)
 {
-//	unsigned int i;
+	pthread_t tid;
 
 	if (ac < 5 || (sim->n_philosophers = ft_atoi(av[1])) > THREADS_MAX)
 	{
@@ -15,29 +15,25 @@ int		simulation_init(t_simulation_data *sim, int ac, char **av)
 	sim->time_to_eat = ft_atoi(av[3]);
 	sim->time_to_sleep = ft_atoi(av[4]);
 	sim->meals_per_philosopher_before_stop = ac > 5 ? ft_atoi(av[5]) : 0;
-	sim->stop = FALSE;
-//	sim->meals_per_philosopher = malloc(sizeof(char) * (sim->n_philosophers + 1));
-//	memset(sim->meals_per_philosopher, 0, sizeof(char) * (sim->n_philosophers + 1));
 	gettimeofday(&(sim->start), NULL);
-//	sim->philosophers_last_meals = malloc(sizeof(*(sim->philosophers_last_meals)) * (sim->n_philosophers + 1));
-//	i = 0;
-//	while (i < sim->n_philosophers)
-//	{
-//		sim->philosophers_last_meals[i] = sim->start;
-//		i++;
-//	}
+	if ((forks = sem_open(SEMFORKS, O_CREAT, S_IRWXU, sim->n_philosophers)) == SEM_FAILED
+		|| (death = sem_open(SEMDEATH, O_CREAT, S_IRWXU, 0)) == SEM_FAILED
+			|| (meals = sem_open(SEMMEALS, O_CREAT, S_IRWXU, 0)) == SEM_FAILED)
+		return (1);
+	if (sim->meals_per_philosopher_before_stop > 0)
+		pthread_create(&tid, NULL, count_meals_routine, NULL);
 	return (0);
 }
 
-void	simulation_delete(void *t1, sem_t *forks, sem_t *death)
+void	simulation_delete(void *t1)
 {
+	free(t1);
 	sem_unlink(SEMFORKS);
 	sem_close(forks);
 	sem_unlink(SEMDEATH);
 	sem_close(death);
-//	free(simulation.meals_per_philosopher); USELESS
-//	free(simulation.philosophers_last_meals); USELESS
-	free(t1);
+	sem_unlink(SEMMEALS);
+	sem_close(death);
 }
 
 int		*create_childs(unsigned int n)
@@ -67,10 +63,8 @@ void	child_process_actions(unsigned int n)
 	struct timeval now;
 
 	last_meal = simulation.start;
-	// launch thread && join thread ?
+	n_meals = 0;
 	pthread_create(&tid, NULL, philosophing, &n);
-	// keep track of death
-	// if death post on semaphore DEATH
 	while (TRUE)
 	{
 		gettimeofday(&now, NULL);
@@ -78,34 +72,23 @@ void	child_process_actions(unsigned int n)
 		{
 			message(n, DEAD);
 			sem_post(death);
+			return ;
 		}
-		usleep(5); // useful ?
+		usleep(100); // useful ?
 	}
 }
 
-/*
-void	create_threads(pthread_t *thread_ids, int *philosopher_ids)
+void	*count_meals_routine(void *arg)
 {
+	(void)arg;
 	unsigned int i;
 
 	i = 0;
 	while (i < simulation.n_philosophers)
 	{
-		philosopher_ids[i] = i;
-		pthread_create(&thread_ids[i], NULL, philosophing, &philosopher_ids[i]);
+		sem_wait(meals);
 		i++;
 	}
+	sem_post(death);
+	return (NULL);
 }
-
-void	wait_threads(pthread_t *thread_ids)
-{
-	unsigned int i;
-
-	i = 0;
-	while (i < simulation.n_philosophers)
-	{
-		pthread_join(thread_ids[i], NULL);
-		i++;
-	}
-}
-*/

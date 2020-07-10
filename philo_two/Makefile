@@ -11,7 +11,7 @@ NAME = philo_two
 $(NAME): $(HEADER) $(SRCS) main.c
 		gcc $(FLAGS) $(SRCS) main.c -o $(NAME) -lpthread
 
-all: $(PHILO1)
+all: $(NAME)
 
 clean:
 		rm -f $(OBJS)
