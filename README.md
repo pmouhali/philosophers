@@ -11,6 +11,9 @@ https://fr.wikipedia.org/wiki/D%C3%AEner_des_philosophes
 ### philo_one : threads et mutex
 
 Mutex Synchronisation :
+
+https://www.geeksforgeeks.org/mutex-lock-for-linux-thread-synchronization/
+
 https://youtu.be/GXXE42bkqQk
 
 Mutex man :

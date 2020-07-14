@@ -2,8 +2,9 @@
 
 #include "philosophers.h"
 
-static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+//static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
+/*
 void	check_for_death(int n, struct timeval last_meal)
 {
 	struct timeval now;
@@ -69,14 +70,16 @@ int		philosopher_eat(int n, struct timeval *last_meal)
 	pthread_mutex_unlock(&mutex);
 	return (FALSE);
 }
+*/
 
+/*
 void	*philosophing(void *arg)
 {
 	struct timeval last_meal;
-	int n;
+	unsigned char n;
 
 	last_meal = simulation.start;
-	n = *(int*)arg + 1;
+	n = *(unsigned char*)arg + 1;
 	while (simulation.stop == FALSE)							// zone critique mais le résultat n'est pas impacté négativement
 	{
 		if (philosopher_eat(n, &last_meal))
@@ -89,30 +92,77 @@ void	*philosophing(void *arg)
 	}
 	return (NULL);
 }
+*/
+
+
+///*
+void	*philosophing(void *arg)
+{
+	unsigned char n;
+
+	n = *(unsigned char*)arg + 1;
+	while (simulation.stop == FALSE)
+	{
+		// try to eat
+		pthread_mutex_lock(&(simulation.mutexes[LEFT_FORK(n)]));
+		message(n, TAKING_FORK);
+		pthread_mutex_lock(&(simulation.mutexes[RIGHT_FORK(n)]));
+		message(n, TAKING_FORK);
+
+		gettimeofday(&(simulation.meals_time[n - 1]), NULL);
+		message(n, EATING);
+		usleep(simulation.time_to_eat * 1000);
+
+		pthread_mutex_unlock(&(simulation.mutexes[LEFT_FORK(n)]));
+		pthread_mutex_unlock(&(simulation.mutexes[RIGHT_FORK(n)]));
+
+		// sleep and think if eat success
+		message(n, SLEEPING);
+		usleep(simulation.time_to_sleep * 1000);
+		message(n, THINKING);
+	}
+	return (NULL);
+}
+//*/
 
 int		main(int ac, char *av[])
 {
-	int i;
-	int *philosopher_ids;
-	pthread_t *thread_ids;
+	unsigned char i;
+	unsigned char philosopher_ids[MAX_PHILOS + 1];
+	pthread_t thread_ids[MAX_PHILOS + 1];
 
 	if (simulation_init(&simulation, ac, av))
 		return (EXIT_FAILURE);
-	philosopher_ids = malloc(sizeof(int*) * simulation.n_philosophers);
-	thread_ids = malloc(sizeof(pthread_t*) * simulation.n_philosophers);
+	// START THREADS
 	i = -1;
 	while (++i < simulation.n_philosophers)
 	{
 		philosopher_ids[i] = i;
 		pthread_create(&thread_ids[i], NULL, philosophing, &philosopher_ids[i]);
 	}
+	
+	struct timeval now;
+	// DEATH CHECK
+	while (simulation.stop == FALSE)
+	{
+		i = -1;
+		gettimeofday(&now, NULL);
+		while (++i < simulation.n_philosophers && simulation.stop == FALSE)
+		{
+			if (elapsed_time(simulation.meals_time[i], now) > simulation.time_to_die)
+			{
+				simulation.stop = TRUE;
+				message(i + 1, DEAD);
+			}
+		}
+	}
+
+	// WAIT THREADS
 	i = -1;
 	while (++i < simulation.n_philosophers)
 		pthread_join(thread_ids[i], NULL);
-	free(simulation.table);
-	free(simulation.meals_per_philosopher);
-	free(philosopher_ids);
-	free(thread_ids);
-	pthread_mutex_destroy(&mutex);
+	simulation_end(&simulation);
+
+//	pthread_mutex_destroy(&mutex);
 	return (EXIT_SUCCESS);
 }
