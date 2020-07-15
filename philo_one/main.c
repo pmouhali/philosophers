@@ -2,100 +2,49 @@
 
 #include "philosophers.h"
 
-//static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+//static pthread_mutex_t death = PTHREAD_MUTEX_INITIALIZER;
 
-/*
-void	check_for_death(int n, struct timeval last_meal)
-{
-	struct timeval now;
-
-	gettimeofday(&now, NULL);
-	if (elapsed_time(last_meal, now) > simulation.time_to_die)
-	{
-		pthread_mutex_lock(&mutex);
-		simulation.stop = TRUE;
-		pthread_mutex_unlock(&mutex);
-		message(n, DEAD);
-	}
-}
-
-void	check_for_end_of_simulation(void)
-{
-	int i;
-
-	if (simulation.stop == TRUE)
-		return ;
-	if (simulation.meals_per_philosopher_before_stop > 0)
-	{
-		i = 0;
-		while (simulation.meals_per_philosopher[i] >= simulation.meals_per_philosopher_before_stop)
-			i++;
-		if (i == simulation.n_philosophers)
-			simulation.stop = TRUE;
-	}
-}
-
-void	philosopher_sleep(int n)
-{
-	check_for_end_of_simulation();
-	message(n, SLEEPING);
-	usleep(simulation.time_to_sleep * 1000);
-}
-
-void	philosopher_think(int n)
-{
-	check_for_end_of_simulation();
-	message(n, THINKING);
-}
-
-int		philosopher_eat(int n, struct timeval *last_meal)
-{
-	pthread_mutex_lock(&mutex);
-	if (simulation.table[LEFT_FORK(n)] && simulation.table[RIGHT_FORK(n)])
-	{
-		simulation.table[LEFT_FORK(n)] = 0;
-		simulation.table[RIGHT_FORK(n)] = 0;
-		simulation.meals_per_philosopher[n - 1] += 1;
-		pthread_mutex_unlock(&mutex);
-		message(n, TAKING_FORK);
-		message(n, EATING);
-		gettimeofday(last_meal, NULL);
-		usleep(simulation.time_to_eat * 1000);
-		pthread_mutex_lock(&mutex);
-		simulation.table[LEFT_FORK(n)] = 1;
-		simulation.table[RIGHT_FORK(n)] = 1;
-		pthread_mutex_unlock(&mutex);
-		return (TRUE);
-	}
-	pthread_mutex_unlock(&mutex);
-	return (FALSE);
-}
-*/
-
-/*
+///* VERSION ou il repose la fourchette si l'autre n'est pas dispo
 void	*philosophing(void *arg)
 {
-	struct timeval last_meal;
 	unsigned char n;
 
-	last_meal = simulation.start;
 	n = *(unsigned char*)arg + 1;
-	while (simulation.stop == FALSE)							// zone critique mais le résultat n'est pas impacté négativement
+	while (simulation.stop == FALSE)
 	{
-		if (philosopher_eat(n, &last_meal))
+		// try to eat
+		pthread_mutex_lock(&(simulation.mutexes[LEFT_FORK(n)]));
+		if (simulation.table[RIGHT_FORK(n)] == 1)
 		{
-			philosopher_sleep(n);
-			philosopher_think(n);
+			pthread_mutex_lock(&(simulation.mutexes[RIGHT_FORK(n)]));
+			simulation.table[LEFT_FORK(n)] = 0;
+			simulation.table[RIGHT_FORK(n)] = 0;
+			message(n, TAKING_FORK);
+			message(n, TAKING_FORK);
+
+			gettimeofday(&(simulation.meals_time[n - 1]), NULL);
+			message(n, EATING);
+			usleep(simulation.time_to_eat * 1000);
+
+			simulation.table[LEFT_FORK(n)] = 1;
+			simulation.table[RIGHT_FORK(n)] = 1;
+			pthread_mutex_unlock(&(simulation.mutexes[LEFT_FORK(n)]));
+			pthread_mutex_unlock(&(simulation.mutexes[RIGHT_FORK(n)]));
+
+			simulation.meals_per_philosopher[n - 1] += 1;
+			// sleep and think if eat success
+			message(n, SLEEPING);
+			usleep(simulation.time_to_sleep * 1000);
+			message(n, THINKING);
 		}
 		else
-			check_for_death(n, last_meal);
+			pthread_mutex_unlock(&(simulation.mutexes[LEFT_FORK(n)]));
 	}
 	return (NULL);
 }
-*/
+//*/
 
-
-///*
+/* VERSION sans verification: ne fonctionne pas du tout ! 
 void	*philosophing(void *arg)
 {
 	unsigned char n;
@@ -116,6 +65,7 @@ void	*philosophing(void *arg)
 		pthread_mutex_unlock(&(simulation.mutexes[LEFT_FORK(n)]));
 		pthread_mutex_unlock(&(simulation.mutexes[RIGHT_FORK(n)]));
 
+		simulation.meals_per_philosopher[n - 1] += 1;
 		// sleep and think if eat success
 		message(n, SLEEPING);
 		usleep(simulation.time_to_sleep * 1000);
@@ -123,10 +73,11 @@ void	*philosophing(void *arg)
 	}
 	return (NULL);
 }
-//*/
+*/
 
 int		main(int ac, char *av[])
 {
+	unsigned long long elapsed_t;
 	unsigned char i;
 	unsigned char philosopher_ids[MAX_PHILOS + 1];
 	pthread_t thread_ids[MAX_PHILOS + 1];
@@ -146,14 +97,28 @@ int		main(int ac, char *av[])
 	while (simulation.stop == FALSE)
 	{
 		i = -1;
-		gettimeofday(&now, NULL);
 		while (++i < simulation.n_philosophers && simulation.stop == FALSE)
 		{
-			if (elapsed_time(simulation.meals_time[i], now) > simulation.time_to_die)
+			gettimeofday(&now, NULL);
+			if (simulation.table[LEFT_FORK(i + 1)] && simulation.table[RIGHT_FORK(i + 1)])
 			{
-				simulation.stop = TRUE;
-				message(i + 1, DEAD);
+				pthread_mutex_lock(&(simulation.mutexes[LEFT_FORK(i + 1)]));
+				elapsed_t = elapsed_time(simulation.meals_time[i], now);
+				if (elapsed_t > simulation.time_to_die)
+				{
+					simulation.stop = TRUE;
+					message(i + 1, DEAD);
+				}
+				pthread_mutex_unlock(&(simulation.mutexes[LEFT_FORK(i + 1)]));
 			}
+		}
+		if (simulation.meals_per_philosopher_before_stop > 0)
+		{
+			i = 0;
+			while (simulation.meals_per_philosopher[i] >= simulation.meals_per_philosopher_before_stop)
+				i++;
+			if (i == simulation.n_philosophers)
+				simulation.stop = TRUE;
 		}
 	}
 

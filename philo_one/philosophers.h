@@ -52,7 +52,7 @@ typedef struct	s_simulation_data
 t_simulation_data simulation;
 
 void    		simulation_end(t_simulation_data *simulation);
-unsigned long	elapsed_time(struct timeval t1, struct timeval t2);
+unsigned long long	elapsed_time(struct timeval t1, struct timeval t2);
 void			message(int n, int state);
 int				simulation_init(t_simulation_data *sim, int ac, char **av);
 size_t			ft_strlen(const char *s);

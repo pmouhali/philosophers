@@ -9,7 +9,7 @@ OBJS = $(SRCS:.c=.o)
 NAME = philo_one
 
 $(NAME): $(HEADER) $(SRCS) main.c
-		gcc $(FLAGS) $(SRCS) main.c -o $(NAME) -lpthread
+		gcc $(FLAGS) -o1 $(SRCS) main.c -o $(NAME) -lpthread
 
 all: $(NAME)
 
