@@ -75,7 +75,6 @@ void	message(int n, int state)
 	static char *strs[] = {
 		" has taken a fork\n\0",
 		" is eating\n\0",
-		" has put down a fork\n\0",
 		" is sleeping\n\0",
 		" is thinking\n\0",
 		" died\n\0"
