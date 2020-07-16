@@ -81,7 +81,9 @@ void	message(int n, int state)
 	};
 	char msg[55];
 	int len;
-	
+
+	if (simulation.stop == TRUE && state != DEAD)
+		return ;
 	gettimeofday(&now, NULL);
 	msg[0] = '[';
 	ft_ultoa(elapsed_time(simulation.start, now), &msg[1]);
