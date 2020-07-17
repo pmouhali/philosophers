@@ -29,13 +29,13 @@ int		simulation_init(t_simulation_data *sim, int ac, char **av)
 	return (0);
 }
 
-void	simulation_end(t_simulation_data *simulation)
+void	simulation_end(t_simulation_data *g_simulation)
 {
 	unsigned int i;
 
 	i = -1;
-	while (++i < simulation->n)
-		pthread_mutex_destroy(&(simulation->mutexes[i]));
+	while (++i < g_simulation->n)
+		pthread_mutex_destroy(&(g_simulation->mutexes[i]));
 }
 
 void	start_threads(pthread_t *tids, unsigned int n)
@@ -66,25 +66,25 @@ void	watch_for_death(void)
 	struct timeval now;
 
 	i = -1;
-	while (++i < simulation.n && simulation.stop == FALSE) 
+	while (++i < g_simulation.n && g_simulation.stop == FALSE) 
 	{
 		gettimeofday(&now, NULL);
-		if (simulation.table[LEFT_FORK(i + 1)] && simulation.table[RIGHT_FORK(i + 1)])
+		if (g_simulation.table[left_fork(i + 1)] && g_simulation.table[right_fork(i + 1)])
 		{ 
-			pthread_mutex_lock(&(simulation.mutexes[LEFT_FORK(i + 1)]));
-			if (elapsed_time(simulation.meals_time[i], now) > simulation.time_to_die)
+			pthread_mutex_lock(&(g_simulation.mutexes[left_fork(i + 1)]));
+			if (elapsed_time(g_simulation.meals_time[i], now) > g_simulation.time_to_die)
 			{
-				simulation.stop = TRUE;
+				g_simulation.stop = TRUE;
 				message(i + 1, DEAD);
 			}
-			pthread_mutex_unlock(&(simulation.mutexes[LEFT_FORK(i + 1)]));
+			pthread_mutex_unlock(&(g_simulation.mutexes[left_fork(i + 1)]));
 		}
 	}
-	if (simulation.meals_option == 0)
+	if (g_simulation.meals_option == 0)
 		return ;
 	i = 0;
-	while (simulation.meals_count[i] >= simulation.meals_option)
+	while (g_simulation.meals_count[i] >= g_simulation.meals_option)
 		i++;
-	if (i == simulation.n)
-		simulation.stop = TRUE;
+	if (i == g_simulation.n)
+		g_simulation.stop = TRUE;
 }

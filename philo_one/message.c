@@ -82,13 +82,11 @@ void	message(int n, int state)
 	char msg[55];
 	int len;
 	
-	// TMP
-	if (simulation.stop == TRUE && state != DEAD)
+	if (g_simulation.stop == TRUE && state != DEAD)
 		return ;
-	// TMP
 	gettimeofday(&now, NULL);
 	msg[0] = '[';
-	ft_ultoa(elapsed_time(simulation.start, now), &msg[1]);
+	ft_ultoa(elapsed_time(g_simulation.start, now), &msg[1]);
 	msg[21] = ']';
 	msg[22] = ' ';
 	len = ft_itoa(n, &msg[23]);
