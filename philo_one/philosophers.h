@@ -6,7 +6,7 @@
 /*   By: pmouhali <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/17 14:30:32 by pmouhali          #+#    #+#             */
-/*   Updated: 2020/07/17 14:38:44 by pmouhali         ###   ########.fr       */
+/*   Updated: 2020/07/17 22:14:25 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@
 
 # define MAX_PHILOS 200
 
-# define USAGE "Usage: ./philo_one <philosophers> <time to die> <time to eat> <time to sleep> <Optional: how many time each must eat for the simulation to stop>\n"
+# define USAGE "Usage: 4 required parameters, no negative numbers.\n"
 
 enum	e_states
 {
@@ -38,7 +38,7 @@ enum	e_states
 
 typedef struct	s_simulation_data
 {
-	unsigned char	n; 
+	unsigned char	n;
 	unsigned long	time_to_die;
 	unsigned long	time_to_eat;
 	unsigned long	time_to_sleep;
@@ -55,19 +55,17 @@ typedef struct	s_simulation_data
 
 t_simulation_data g_simulation;
 
+unsigned long	elapsed_time(struct timeval t1, struct timeval t2);
 int				simulation_init(t_simulation_data *sim, int ac, char **av);
-void    		simulation_end(t_simulation_data *simulation);
+int				ft_atoi(const char *str);
+void			simulation_end(t_simulation_data *simulation);
 void			start_threads(pthread_t *tids, unsigned int n);
 void			wait_threads(pthread_t *tids, unsigned int n);
 void			watch_for_death(void);
-
-unsigned int	left_fork(unsigned char i);
-unsigned int	right_fork(unsigned char i);
 void			*philosophing(void *arg);
-
-unsigned long long	elapsed_time(struct timeval t1, struct timeval t2);
 void			message(int n, int state);
 size_t			ft_strlen(const char *s);
-int				ft_atoi(const char *str);
+unsigned int	left_fork(unsigned char i);
+unsigned int	right_fork(unsigned char i);
 
 #endif

@@ -6,16 +6,16 @@
 /*   By: pmouhali <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/17 14:29:11 by pmouhali          #+#    #+#             */
-/*   Updated: 2020/07/17 14:29:15 by pmouhali         ###   ########.fr       */
+/*   Updated: 2020/07/17 22:13:11 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-unsigned long long	elapsed_time(struct timeval t1, struct timeval t2)
+unsigned long	elapsed_time(struct timeval t1, struct timeval t2)
 {
-	unsigned long long timestamp1;
-	unsigned long long timestamp2;
+	unsigned long timestamp1;
+	unsigned long timestamp2;
 
 	timestamp1 = (t1.tv_usec / 1000 + t1.tv_sec * 1000);
 	timestamp2 = (t2.tv_usec / 1000 + t2.tv_sec * 1000);
