@@ -26,7 +26,7 @@
 #define SEMDEATH "/keydeath"
 #define SEMMEALS "/keymeals"
 #define THREADS_MAX 10000
-#define USAGE "Usage: ./philoX <philosophers> <time to die> <time to eat> <time to sleep> <Optional: how many time each must eat for the simulation to stop>\n"
+#define USAGE "Usage: ./philo_three <philosophers> <time to die> <time to eat> <time to sleep> <Optional: how many time each must eat for the simulation to stop>\n"
 
 enum	e_states
 {
@@ -39,11 +39,11 @@ enum	e_states
 
 typedef struct	s_simulation_data
 {
-	unsigned int	n_philosophers;                                                
+	unsigned int	n;                                                
 	unsigned long	time_to_die;
 	unsigned long	time_to_eat;
 	unsigned long	time_to_sleep;  
-	unsigned int	meals_per_philosopher_before_stop;
+	unsigned int	meals_option;
 	struct timeval	start;
 
 }				t_simulation_data;

@@ -13,14 +13,14 @@ int		main(int ac, char *av[])
 	unsigned int i;
 	int *pids;
 
-	if (simulation_init(&simulation, ac, av) || (pids = create_childs(simulation.n_philosophers)) == NULL)
+	if (simulation_init(&simulation, ac, av) || (pids = create_childs(simulation.n)) == NULL)
 	{
 		simulation_delete(NULL);
 		return (EXIT_FAILURE);
 	}
 	sem_wait(death);
 	i = -1;
-	while (++i < simulation.n_philosophers)
+	while (++i < simulation.n)
 		kill(pids[i], SIGKILL);
 	simulation_delete(pids);
 	return (EXIT_SUCCESS);
@@ -34,5 +34,4 @@ int		main(int ac, char *av[])
 **		2.3 : philosophing devra update la variable last meal, et WAIT/POST sur forks.
 **
 **	3. Si death est débloqué, le main process (father) kill tout les fils.
-**	
 */

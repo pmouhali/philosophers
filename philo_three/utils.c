@@ -2,29 +2,6 @@
 
 #include "philosophers.h"
 
-int		simulation_init(t_simulation_data *sim, int ac, char **av)
-{
-	pthread_t tid;
-
-	if (ac < 5 || (sim->n_philosophers = ft_atoi(av[1])) > THREADS_MAX)
-	{
-		write(1, USAGE, ft_strlen(USAGE));
-		return (1);
-	}
-	sim->time_to_die = ft_atoi(av[2]);
-	sim->time_to_eat = ft_atoi(av[3]);
-	sim->time_to_sleep = ft_atoi(av[4]);
-	sim->meals_per_philosopher_before_stop = ac > 5 ? ft_atoi(av[5]) : 0;
-	gettimeofday(&(sim->start), NULL);
-	if ((forks = sem_open(SEMFORKS, O_CREAT, S_IRWXU, sim->n_philosophers)) == SEM_FAILED
-		|| (death = sem_open(SEMDEATH, O_CREAT, S_IRWXU, 0)) == SEM_FAILED
-			|| (meals = sem_open(SEMMEALS, O_CREAT, S_IRWXU, 0)) == SEM_FAILED)
-		return (1);
-	if (sim->meals_per_philosopher_before_stop > 0)
-		pthread_create(&tid, NULL, count_meals_routine, NULL);
-	return (0);
-}
-
 void	simulation_delete(void *t1)
 {
 	free(t1);
@@ -34,6 +11,30 @@ void	simulation_delete(void *t1)
 	sem_close(death);
 	sem_unlink(SEMMEALS);
 	sem_close(death);
+}
+
+int		simulation_init(t_simulation_data *sim, int ac, char **av)
+{
+	pthread_t tid;
+
+	simulation_delete(NULL);
+	if (ac < 5 || (sim->n = ft_atoi(av[1])) > THREADS_MAX)
+	{
+		write(1, USAGE, ft_strlen(USAGE));
+		return (1);
+	}
+	sim->time_to_die = ft_atoi(av[2]);
+	sim->time_to_eat = ft_atoi(av[3]);
+	sim->time_to_sleep = ft_atoi(av[4]);
+	sim->meals_option = ac > 5 ? ft_atoi(av[5]) : 0;
+	gettimeofday(&(sim->start), NULL);
+	if ((forks = sem_open(SEMFORKS, O_CREAT, S_IRWXU, sim->n)) == SEM_FAILED
+		|| (death = sem_open(SEMDEATH, O_CREAT, S_IRWXU, 0)) == SEM_FAILED
+			|| (meals = sem_open(SEMMEALS, O_CREAT, S_IRWXU, 0)) == SEM_FAILED)
+		return (1);
+	if (sim->meals_option > 0)
+		pthread_create(&tid, NULL, count_meals_routine, NULL);
+	return (0);
 }
 
 int		*create_childs(unsigned int n)
@@ -84,7 +85,7 @@ void	*count_meals_routine(void *arg)
 	unsigned int i;
 
 	i = 0;
-	while (i < simulation.n_philosophers)
+	while (i < simulation.n)
 	{
 		sem_wait(meals);
 		i++;

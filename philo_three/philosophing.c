@@ -8,11 +8,6 @@ void	philosopher_sleep(int n)
 	usleep(simulation.time_to_sleep * 1000);
 }
 
-void	philosopher_think(int n)
-{
-	message(n, THINKING);
-}
-
 int		philosopher_eat(int n, struct timeval *last_meal)
 {
 	sem_wait(forks);					// SEMAPHORE -1 fourchette
@@ -21,7 +16,7 @@ int		philosopher_eat(int n, struct timeval *last_meal)
 	message(n, TAKING_FORK);				// notification
 	message(n, EATING);						// notification
 	n_meals++;
-	if (simulation.meals_per_philosopher_before_stop > 0 && n_meals == simulation.meals_per_philosopher_before_stop)
+	if (simulation.meals_option > 0 && n_meals == simulation.meals_option)
 		sem_post(meals);
 	gettimeofday(last_meal, NULL);			// enregistre l'heure du repas 
 	usleep(simulation.time_to_eat * 1000);	// mange
@@ -39,7 +34,8 @@ void	*philosophing(void *arg)
 	{
 		philosopher_eat(n, &last_meal);
 		philosopher_sleep(n);
-		philosopher_think(n);
+		message(n, THINKING);
+		usleep(100);
 	}
 	return (NULL);
 }
