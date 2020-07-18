@@ -1,37 +1,37 @@
-// 42 Header
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: user42 <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/07/18 22:05:17 by user42            #+#    #+#             */
+/*   Updated: 2020/07/18 22:13:36 by user42           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "philosophers.h"
 
-struct timeval	last_meal;
-unsigned int n_meals;
-sem_t *forks;
-sem_t *death;
-sem_t *meals;
+struct timeval	g_last_meal;
+unsigned int g_n_meals;
+sem_t *g_forks;
+sem_t *g_death;
+sem_t *g_meals;
 
 int		main(int ac, char *av[])
 {
-	unsigned int i;
-	int *pids;
+	unsigned int	i;
+	int				*pids;
 
-	if (simulation_init(&simulation, ac, av) || (pids = create_childs(simulation.n)) == NULL)
+	if (simulation_init(&g_s, ac, av) || (pids = create_childs(g_s.n)) == NULL)
 	{
 		simulation_delete(NULL);
 		return (EXIT_FAILURE);
 	}
-	sem_wait(death);
+	sem_wait(g_death);
 	i = -1;
-	while (++i < simulation.n)
+	while (++i < g_s.n)
 		kill(pids[i], SIGKILL);
 	simulation_delete(pids);
 	return (EXIT_SUCCESS);
 }
-
-/*
-**	1. Lancer 1 processus fils par philosphe.	
-**	2. Le processus fils obtient son numéro de philosophe.
-**		2.1 : Il va vérifier constemment si il est mort (last_meal devient une simple variable). Si il est mort, il POST sur death. 
-**		2.2 : Il va lancer un thread avec philosophing comme routine.
-**		2.3 : philosophing devra update la variable last meal, et WAIT/POST sur forks.
-**
-**	3. Si death est débloqué, le main process (father) kill tout les fils.
-*/

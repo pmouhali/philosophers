@@ -1,32 +1,38 @@
-// 42 header
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philosophers.h                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: user42 <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/07/18 22:03:50 by user42            #+#    #+#             */
+/*   Updated: 2020/07/18 22:15:20 by user42           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-#ifndef PHILOSOPHER_H
-# define PHILOSOPHER_H
+#ifndef PHILOSOPHERS_H
+# define PHILOSOPHERS_H
 
-#include <sys/wait.h> // TO RM
+# include <stdlib.h>
+# include <unistd.h>
+# include <pthread.h>
+# include <string.h>
+# include <stdint.h>
+# include <sys/time.h>
+# include <sys/stat.h>
+# include <fcntl.h>
+# include <semaphore.h>
+# include <sys/types.h>
+# include <signal.h>
 
-#include <stdlib.h>
-#include <unistd.h>
-#include <pthread.h>
-#include <string.h>
-#include <stdint.h>
-#include <sys/time.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <semaphore.h>
-#include <sys/types.h>
-#include <signal.h>
+# define FALSE 0
+# define TRUE  1
 
-#include <stdio.h>
-
-#define FALSE 0
-#define TRUE  1
-
-#define SEMFORKS "/keyforks"
-#define SEMDEATH "/keydeath"
-#define SEMMEALS "/keymeals"
-#define THREADS_MAX 10000
-#define USAGE "Usage: ./philo_three <philosophers> <time to die> <time to eat> <time to sleep> <Optional: how many time each must eat for the simulation to stop>\n"
+# define SEMFORKS "/keyforks"
+# define SEMDEATH "/keydeath"
+# define SEMMEALS "/keymeals"
+# define THREADS_MAX 10000
+# define USAGE "Usage: 4 parameters minimum required,no negative numbers.\n"
 
 enum	e_states
 {
@@ -39,21 +45,21 @@ enum	e_states
 
 typedef struct	s_simulation_data
 {
-	unsigned int	n;                                                
+	unsigned int	n;
 	unsigned long	time_to_die;
 	unsigned long	time_to_eat;
-	unsigned long	time_to_sleep;  
+	unsigned long	time_to_sleep;
 	unsigned int	meals_option;
 	struct timeval	start;
 
 }				t_simulation_data;
 
-t_simulation_data simulation;
-struct timeval last_meal;
-unsigned int n_meals;
-sem_t *forks;
-sem_t *death;
-sem_t *meals;
+t_simulation_data g_s;
+struct timeval g_last_meal;
+unsigned int g_n_meals;
+sem_t *g_forks;
+sem_t *g_death;
+sem_t *g_meals;
 
 int				*create_childs(unsigned int n);
 void			child_process_actions(unsigned int n);

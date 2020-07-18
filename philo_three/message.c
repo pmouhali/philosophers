@@ -1,4 +1,14 @@
-// 42 Header
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   message.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: user42 <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/07/18 21:27:03 by user42            #+#    #+#             */
+/*   Updated: 2020/07/18 22:09:15 by user42           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "philosophers.h"
 
@@ -28,17 +38,17 @@ static void	*ft_memmove(void *dest, const void *src, size_t n)
 	return (dest);
 }
 
-static int    ft_itoa(int n, char *str) // renvoie le nombre d'octets écris
-{                                                                                
-	int i;
-	int j;
-	char t[10];
+static int	ft_itoa(int n, char *str)
+{
+	int		i;
+	int		j;
+	char	t[10];
 
 	memset(t, 48, 10);
 	i = 9;
 	while (n)
 	{
-		t[i] = (n % 10) + 48; 
+		t[i] = (n % 10) + 48;
 		n = n / 10;
 		i--;
 	}
@@ -55,12 +65,12 @@ static int    ft_itoa(int n, char *str) // renvoie le nombre d'octets écris
 	return (j);
 }
 
-static void    ft_ultoa(unsigned long n, char *str)
+static void	ft_ultoa(unsigned long n, char *str)
 {
 	int i;
 
 	memset(str, 48, 20);
-	i = 19;                                                                      
+	i = 19;
 	while (n)
 	{
 		str[i] = (n % 10) + 48;
@@ -69,22 +79,22 @@ static void    ft_ultoa(unsigned long n, char *str)
 	}
 }
 
-void	message(int n, int state)
+void		message(int n, int state)
 {
-	struct timeval now;
-	static char *strs[] = {
+	struct timeval	now;
+	static char		*strs[] = {
 		" has taken a fork\n\0",
 		" is eating\n\0",
 		" is sleeping\n\0",
 		" is thinking\n\0",
 		" died\n\0"
 	};
-	char msg[55];
-	int len;
-	
+	char			msg[55];
+	int				len;
+
 	gettimeofday(&now, NULL);
 	msg[0] = '[';
-	ft_ultoa(elapsed_time(simulation.start, now), &msg[1]);
+	ft_ultoa(elapsed_time(g_s.start, now), &msg[1]);
 	msg[21] = ']';
 	msg[22] = ' ';
 	len = ft_itoa(n, &msg[23]);

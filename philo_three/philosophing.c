@@ -1,27 +1,37 @@
-// 42 Header
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philosophing.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: user42 <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/07/18 22:06:23 by user42            #+#    #+#             */
+/*   Updated: 2020/07/18 22:14:37 by user42           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "philosophers.h"
 
 void	philosopher_sleep(int n)
 {
 	message(n, SLEEPING);
-	usleep(simulation.time_to_sleep * 1000);
+	usleep(g_s.time_to_sleep * 1000);
 }
 
 int		philosopher_eat(int n, struct timeval *last_meal)
 {
-	sem_wait(forks);					// SEMAPHORE -1 fourchette
-	message(n, TAKING_FORK);				// notification
-	sem_wait(forks);					// SEMAPHORE -1 fourchette
-	message(n, TAKING_FORK);				// notification
-	message(n, EATING);						// notification
-	n_meals++;
-	if (simulation.meals_option > 0 && n_meals == simulation.meals_option)
-		sem_post(meals);
-	gettimeofday(last_meal, NULL);			// enregistre l'heure du repas 
-	usleep(simulation.time_to_eat * 1000);	// mange
-	sem_post(forks); 					// SEMAPHORE +1 fourchette
-	sem_post(forks); 					// SEMAPHORE +1 fourchette
+	sem_wait(g_forks);
+	message(n, TAKING_FORK);
+	sem_wait(g_forks);
+	message(n, TAKING_FORK);
+	message(n, EATING);
+	g_n_meals++;
+	if (g_s.meals_option > 0 && g_n_meals == g_s.meals_option)
+		sem_post(g_meals);
+	gettimeofday(last_meal, NULL);
+	usleep(g_s.time_to_eat * 1000);
+	sem_post(g_forks);
+	sem_post(g_forks);
 	return (TRUE);
 }
 
@@ -32,7 +42,7 @@ void	*philosophing(void *arg)
 	n = *(unsigned int*)arg;
 	while (TRUE)
 	{
-		philosopher_eat(n, &last_meal);
+		philosopher_eat(n, &g_last_meal);
 		philosopher_sleep(n);
 		message(n, THINKING);
 		usleep(100);

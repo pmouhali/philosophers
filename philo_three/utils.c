@@ -1,4 +1,14 @@
-// 42 HEADER
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: user42 <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/07/18 22:15:40 by user42            #+#    #+#             */
+/*   Updated: 2020/07/18 22:18:34 by user42           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "philosophers.h"
 
@@ -6,11 +16,11 @@ void	simulation_delete(void *t1)
 {
 	free(t1);
 	sem_unlink(SEMFORKS);
-	sem_close(forks);
+	sem_close(g_forks);
 	sem_unlink(SEMDEATH);
-	sem_close(death);
+	sem_close(g_death);
 	sem_unlink(SEMMEALS);
-	sem_close(death);
+	sem_close(g_death);
 }
 
 int		simulation_init(t_simulation_data *sim, int ac, char **av)
@@ -28,9 +38,9 @@ int		simulation_init(t_simulation_data *sim, int ac, char **av)
 	sim->time_to_sleep = ft_atoi(av[4]);
 	sim->meals_option = ac > 5 ? ft_atoi(av[5]) : 0;
 	gettimeofday(&(sim->start), NULL);
-	if ((forks = sem_open(SEMFORKS, O_CREAT, S_IRWXU, sim->n)) == SEM_FAILED
-		|| (death = sem_open(SEMDEATH, O_CREAT, S_IRWXU, 0)) == SEM_FAILED
-			|| (meals = sem_open(SEMMEALS, O_CREAT, S_IRWXU, 0)) == SEM_FAILED)
+	if ((g_forks = sem_open(SEMFORKS, O_CREAT, S_IRWXU, sim->n)) == SEM_FAILED
+		|| (g_death = sem_open(SEMDEATH, O_CREAT, S_IRWXU, 0)) == SEM_FAILED
+		|| (g_meals = sem_open(SEMMEALS, O_CREAT, S_IRWXU, 0)) == SEM_FAILED)
 		return (1);
 	if (sim->meals_option > 0)
 		pthread_create(&tid, NULL, count_meals_routine, NULL);
@@ -39,15 +49,14 @@ int		simulation_init(t_simulation_data *sim, int ac, char **av)
 
 int		*create_childs(unsigned int n)
 {
-	int *pids;
-	unsigned int i;
+	int				*pids;
+	unsigned int	i;
 
 	if ((pids = malloc(sizeof(int) * n)) == NULL)
 		return (NULL);
 	i = -1;
 	while (++i < n)
 	{
-		// create a child with a n° of philosopher, the child will lauch a thread with the philosophing routine
 		pids[i] = fork();
 		if (pids[i] == 0)
 		{
@@ -60,36 +69,36 @@ int		*create_childs(unsigned int n)
 
 void	child_process_actions(unsigned int n)
 {
-	pthread_t tid;
-	struct timeval now;
+	pthread_t		tid;
+	struct timeval	now;
 
-	last_meal = simulation.start;
-	n_meals = 0;
+	g_last_meal = g_s.start;
+	g_n_meals = 0;
 	pthread_create(&tid, NULL, philosophing, &n);
 	while (TRUE)
 	{
 		gettimeofday(&now, NULL);
-		if (elapsed_time(last_meal, now) > simulation.time_to_die)
+		if (elapsed_time(g_last_meal, now) > g_s.time_to_die)
 		{
 			message(n, DEAD);
-			sem_post(death);
+			sem_post(g_death);
 			return ;
 		}
-		usleep(100); // useful ?
+		usleep(100);
 	}
 }
 
 void	*count_meals_routine(void *arg)
 {
-	(void)arg;
-	unsigned int i;
+	unsigned int	i;
 
+	arg = 0;
 	i = 0;
-	while (i < simulation.n)
+	while (i < g_s.n)
 	{
-		sem_wait(meals);
+		sem_wait(g_meals);
 		i++;
 	}
-	sem_post(death);
+	sem_post(g_death);
 	return (NULL);
 }
