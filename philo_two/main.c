@@ -1,26 +1,35 @@
-// 42 Header
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: user42 <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/07/18 21:20:16 by user42            #+#    #+#             */
+/*   Updated: 2020/07/18 21:28:15 by user42           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "philosophers.h"
 
-sem_t *forks;
-sem_t *eat;
+sem_t *g_forks;
+sem_t *g_eat;
 
 int		main(int ac, char *av[])
 {
-	int *philosopher_ids;
-	pthread_t *thread_ids;
+	int			*philosopher_ids;
+	pthread_t	*thread_ids;
 
-	if (simulation_init(&simulation, ac, av))
+	if (simulation_init(&g_s, ac, av))
 		return (EXIT_FAILURE);
-	if ((forks = sem_open(SEMFORKS, O_CREAT, S_IRWXU, simulation.n)) == SEM_FAILED
-		|| (eat = sem_open(SEMEAT, O_CREAT, S_IRWXU, simulation.n)) == SEM_FAILED
-	)
+	if ((g_forks = sem_open(SEMFORKS, O_CREAT, S_IRWXU, g_s.n)) == SEM_FAILED
+		|| (g_eat = sem_open(SEMEAT, O_CREAT, S_IRWXU, g_s.n)) == SEM_FAILED)
 	{
 		simulation_delete(NULL, NULL);
 		return (EXIT_FAILURE);
 	}
-	philosopher_ids = malloc(sizeof(int*) * simulation.n);
-	thread_ids = malloc(sizeof(pthread_t*) * simulation.n);
+	philosopher_ids = malloc(sizeof(int*) * g_s.n);
+	thread_ids = malloc(sizeof(pthread_t*) * g_s.n);
 	create_threads(thread_ids, philosopher_ids);
 	end_checker();
 	wait_threads(thread_ids);

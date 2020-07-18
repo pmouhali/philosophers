@@ -1,20 +1,16 @@
-// 42 Header
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   elapsed_time.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: user42 <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/07/18 21:19:37 by user42            #+#    #+#             */
+/*   Updated: 2020/07/18 21:19:52 by user42           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "philosophers.h"
-
-/*
-**	[NAME] 
-**
-**	elapsed_time
-**
-**	[DESCRIPTION]
-**	
-**	Returns the time interval in milliseconds between t1 and t2.
-**
-**	t1 and t2 are struct timeval variables obtained by calling the <sys/times.h>
-**	function gettimeofday()
-**
-*/
 
 unsigned long	elapsed_time(struct timeval t1, struct timeval t2)
 {

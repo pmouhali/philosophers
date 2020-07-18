@@ -1,19 +1,29 @@
-// 42 HEADER
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: user42 <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/07/18 21:26:02 by user42            #+#    #+#             */
+/*   Updated: 2020/07/18 21:43:50 by user42           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "philosophers.h"
 
-static void	clear_semaphores()
+static void	clear_semaphores(void)
 {
 	sem_unlink(SEMFORKS);
-	sem_close(forks);
+	sem_close(g_forks);
 	sem_unlink(SEMEAT);
-	sem_close(eat);
+	sem_close(g_eat);
 }
 
-int		simulation_init(t_simulation_data *sim, int ac, char **av)
+int			simulation_init(t_simulation_data *sim, int ac, char **av)
 {
 	unsigned int i;
-	
+
 	clear_semaphores();
 	if (ac < 5 || (sim->n = ft_atoi(av[1])) > MAX_PHILOS)
 	{
@@ -38,21 +48,21 @@ int		simulation_init(t_simulation_data *sim, int ac, char **av)
 	return (0);
 }
 
-void	simulation_delete(void *t1, void *t2)
+void		simulation_delete(void *t1, void *t2)
 {
 	clear_semaphores();
-	free(simulation.meals_count);
-	free(simulation.meals_time);
+	free(g_s.meals_count);
+	free(g_s.meals_time);
 	free(t1);
 	free(t2);
 }
 
-void	create_threads(pthread_t *thread_ids, int *philosopher_ids)
+void		create_threads(pthread_t *thread_ids, int *philosopher_ids)
 {
 	unsigned int i;
 
 	i = 0;
-	while (i < simulation.n)
+	while (i < g_s.n)
 	{
 		philosopher_ids[i] = i;
 		pthread_create(&thread_ids[i], NULL, philosophing, &philosopher_ids[i]);
@@ -60,12 +70,12 @@ void	create_threads(pthread_t *thread_ids, int *philosopher_ids)
 	}
 }
 
-void	wait_threads(pthread_t *thread_ids)
+void		wait_threads(pthread_t *thread_ids)
 {
 	unsigned int i;
 
 	i = 0;
-	while (i < simulation.n)
+	while (i < g_s.n)
 	{
 		pthread_join(thread_ids[i], NULL);
 		i++;
