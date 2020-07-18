@@ -91,8 +91,8 @@ void	child_process_actions(unsigned int n)
 void	*count_meals_routine(void *arg)
 {
 	unsigned int	i;
+	(void)arg;
 
-	arg = 0;
 	i = 0;
 	while (i < g_s.n)
 	{
