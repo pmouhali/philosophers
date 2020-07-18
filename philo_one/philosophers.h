@@ -6,7 +6,7 @@
 /*   By: pmouhali <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/17 14:30:32 by pmouhali          #+#    #+#             */
-/*   Updated: 2020/07/17 22:14:25 by user42           ###   ########.fr       */
+/*   Updated: 2020/07/18 12:34:11 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ typedef struct	s_simulation_data
 
 }				t_simulation_data;
 
-t_simulation_data g_simulation;
+t_simulation_data g_s;
 
 unsigned long	elapsed_time(struct timeval t1, struct timeval t2);
 int				simulation_init(t_simulation_data *sim, int ac, char **av);
