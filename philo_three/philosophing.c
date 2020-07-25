@@ -15,7 +15,7 @@
 void	philosopher_sleep(int n)
 {
 	message(n, SLEEPING);
-	usleep(g_s.time_to_sleep * 1000);
+	ft_sleep(g_s.time_to_sleep);
 }
 
 int		philosopher_eat(int n, struct timeval *last_meal)
@@ -29,7 +29,7 @@ int		philosopher_eat(int n, struct timeval *last_meal)
 	if (g_s.meals_option > 0 && g_n_meals == g_s.meals_option)
 		sem_post(g_meals);
 	gettimeofday(last_meal, NULL);
-	usleep(g_s.time_to_eat * 1000);
+	ft_sleep(g_s.time_to_eat);
 	sem_post(g_forks);
 	sem_post(g_forks);
 	return (TRUE);
@@ -45,7 +45,7 @@ void	*philosophing(void *arg)
 		philosopher_eat(n, &g_last_meal);
 		philosopher_sleep(n);
 		message(n, THINKING);
-		usleep(100);
+		usleep(90);
 	}
 	return (NULL);
 }

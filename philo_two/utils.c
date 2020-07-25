@@ -16,8 +16,6 @@ static void	clear_semaphores(void)
 {
 	sem_unlink(SEMFORKS);
 	sem_close(g_forks);
-	sem_unlink(SEMEAT);
-	sem_close(g_eat);
 }
 
 int			simulation_init(t_simulation_data *sim, int ac, char **av)

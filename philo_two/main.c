@@ -13,7 +13,6 @@
 #include "philosophers.h"
 
 sem_t *g_forks;
-sem_t *g_eat;
 
 int		main(int ac, char *av[])
 {
@@ -22,8 +21,7 @@ int		main(int ac, char *av[])
 
 	if (simulation_init(&g_s, ac, av))
 		return (EXIT_FAILURE);
-	if ((g_forks = sem_open(SEMFORKS, O_CREAT, S_IRWXU, g_s.n)) == SEM_FAILED
-		|| (g_eat = sem_open(SEMEAT, O_CREAT, S_IRWXU, g_s.n)) == SEM_FAILED)
+	if ((g_forks = sem_open(SEMFORKS, O_CREAT, S_IRWXU, g_s.n)) == SEM_FAILED)
 	{
 		simulation_delete(NULL, NULL);
 		return (EXIT_FAILURE);

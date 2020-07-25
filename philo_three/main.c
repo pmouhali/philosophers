@@ -29,6 +29,7 @@ int		main(int ac, char *av[])
 		return (EXIT_FAILURE);
 	}
 	sem_wait(g_death);
+	usleep(100);
 	i = -1;
 	while (++i < g_s.n)
 		kill(pids[i], SIGKILL);

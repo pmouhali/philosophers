@@ -58,12 +58,15 @@ t_simulation_data g_s;
 struct timeval g_last_meal;
 unsigned int g_n_meals;
 sem_t *g_forks;
+sem_t *g_eat;
 sem_t *g_death;
 sem_t *g_meals;
 
 int				*create_childs(unsigned int n);
 void			child_process_actions(unsigned int n);
 unsigned long	elapsed_time(struct timeval t1, struct timeval t2);
+unsigned long	get_time_in_ms(void);
+void			ft_sleep(unsigned int millisec);
 void			message(int n, int state);
 int				simulation_init(t_simulation_data *sim, int ac, char **av);
 size_t			ft_strlen(const char *s);

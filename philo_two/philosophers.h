@@ -57,12 +57,13 @@ typedef struct	s_simulation_data
 
 t_simulation_data g_s;
 sem_t *g_forks;
-sem_t *g_eat;
 
 unsigned long	elapsed_time(struct timeval t1, struct timeval t2);
+unsigned long	get_time_in_ms(void);
 size_t			ft_strlen(const char *s);
 int				simulation_init(t_simulation_data *sim, int ac, char **av);
 int				ft_atoi(const char *str);
+void			ft_sleep(unsigned int millisec);
 void			message(int n, int state);
 void			simulation_delete(void *t1, void *t2);
 void			create_threads(pthread_t *threads_ids, int *philosopher_ids);
