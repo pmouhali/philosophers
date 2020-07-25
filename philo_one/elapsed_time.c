@@ -23,3 +23,20 @@ unsigned long	elapsed_time(struct timeval t1, struct timeval t2)
 		return (0);
 	return (timestamp2 - timestamp1);
 }
+
+unsigned long	get_time_in_ms(void)
+{
+	struct timeval now;
+
+	gettimeofday(&now, NULL);
+	return ((now.tv_sec * 1000) + (now.tv_usec / 1000));
+}
+
+void			ft_sleep(unsigned int millisec)
+{
+	unsigned long start_time;
+
+	start_time = get_time_in_ms();
+	while (get_time_in_ms() - start_time < millisec)
+		usleep(500);
+}
