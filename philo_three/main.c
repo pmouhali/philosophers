@@ -14,6 +14,7 @@
 
 struct timeval	g_last_meal;
 unsigned int g_n_meals;
+sem_t *g_eating;
 sem_t *g_forks;
 sem_t *g_death;
 sem_t *g_meals;

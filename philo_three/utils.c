@@ -14,13 +14,27 @@
 
 void	simulation_delete(void *t1)
 {
+/* ******************************** */
+	unsigned int i = 0;
+	char *semkey;
+
+	while (i < g_s.n)
+	{
+		semkey = ft_strjoin_free("eating_", ft_itoa(i), 2);
+		g_eating = sem_open(semkey, O_CREAT, S_IRWXU, 1);
+		sem_unlink(semkey);
+		sem_close(g_eating);
+		free(semkey);
+		i++;
+	}
+/* ******************************** */
 	free(t1);
 	sem_unlink(SEMFORKS);
 	sem_close(g_forks);
 	sem_unlink(SEMDEATH);
 	sem_close(g_death);
 	sem_unlink(SEMMEALS);
-	sem_close(g_death);
+	sem_close(g_meals);
 }
 
 int		simulation_init(t_simulation_data *sim, int ac, char **av)
@@ -37,11 +51,11 @@ int		simulation_init(t_simulation_data *sim, int ac, char **av)
 	sim->time_to_eat = ft_atoi(av[3]);
 	sim->time_to_sleep = ft_atoi(av[4]);
 	sim->meals_option = ac > 5 ? ft_atoi(av[5]) : 0;
-	gettimeofday(&(sim->start), NULL);
 	if ((g_forks = sem_open(SEMFORKS, O_CREAT, S_IRWXU, sim->n)) == SEM_FAILED
 		|| (g_death = sem_open(SEMDEATH, O_CREAT, S_IRWXU, 0)) == SEM_FAILED
 		|| (g_meals = sem_open(SEMMEALS, O_CREAT, S_IRWXU, 0)) == SEM_FAILED)
 		return (1);
+	gettimeofday(&(sim->start), NULL);
 	if (sim->meals_option > 0)
 		pthread_create(&tid, NULL, count_meals_routine, NULL);
 	return (0);
@@ -72,18 +86,31 @@ void	child_process_actions(unsigned int n)
 	pthread_t		tid;
 	struct timeval	now;
 
-	g_last_meal = g_s.start;
+	char			*semkey;
+
+	semkey = ft_strjoin_free("eating_", ft_itoa(n - 1), 2);
+	sem_unlink(semkey);
+	sem_close(g_eating); // useless maybe ?
+	if ((g_eating = sem_open(semkey, O_CREAT, S_IRWXU, 1)) == SEM_FAILED)
+		exit (EXIT_FAILURE);
+	free(semkey);
+
+	gettimeofday(&g_last_meal, NULL);
+	//g_last_meal = g_s.start;
 	g_n_meals = 0;
 	pthread_create(&tid, NULL, philosophing, &n);
 	while (TRUE)
 	{
+		sem_wait(g_eating);
 		gettimeofday(&now, NULL);
 		if (elapsed_time(g_last_meal, now) > g_s.time_to_die)
 		{
 			message(n, DEAD);
+			sem_post(g_eating);
 			sem_post(g_death);
 			return ;
 		}
+		sem_post(g_eating);
 		usleep(100);
 	}
 }

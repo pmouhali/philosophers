@@ -58,7 +58,7 @@ t_simulation_data g_s;
 struct timeval g_last_meal;
 unsigned int g_n_meals;
 sem_t *g_forks;
-sem_t *g_eat;
+sem_t *g_eating;
 sem_t *g_death;
 sem_t *g_meals;
 
@@ -69,13 +69,15 @@ unsigned long	get_time_in_ms(void);
 void			ft_sleep(unsigned int millisec);
 void			message(int n, int state);
 int				simulation_init(t_simulation_data *sim, int ac, char **av);
-size_t			ft_strlen(const char *s);
-int				ft_atoi(const char *str);
 void			simulation_delete(void *t1);
 void			create_threads(pthread_t *threads_ids, int *philosopher_ids);
 void			*philosophing(void *arg);
 void			*count_meals_routine(void *arg);
 void			wait_threads(pthread_t *thread_ids);
 void			end_checker(void);
+size_t			ft_strlen(const char *s);
+int				ft_atoi(const char *str);
+char			*ft_strjoin_free(char *s1, char *s2, int c);
+char			*ft_itoa(int n);
 
 #endif

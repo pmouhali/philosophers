@@ -28,8 +28,10 @@ int		philosopher_eat(int n, struct timeval *last_meal)
 	g_n_meals++;
 	if (g_s.meals_option > 0 && g_n_meals == g_s.meals_option)
 		sem_post(g_meals);
+	sem_wait(g_eating);
 	gettimeofday(last_meal, NULL);
 	ft_sleep(g_s.time_to_eat);
+	sem_post(g_eating);
 	sem_post(g_forks);
 	sem_post(g_forks);
 	return (TRUE);

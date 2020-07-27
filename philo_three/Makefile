@@ -1,6 +1,11 @@
 FLAGS = -Wall -Wextra -Werror
 
-SRCS = ft_atoi.c ft_strlen.c message.c elapsed_time.c utils.c philosophing.c 
+SRCS = 	mini_lft/ft_atoi.c \
+		mini_lft/ft_strlen.c \
+		mini_lft/ft_strjoin_free.c \
+		mini_lft/ft_itoa.c \
+		time_utils.c \
+		message.c utils.c philosophing.c 
 
 HEADER = philosophers.h
 
