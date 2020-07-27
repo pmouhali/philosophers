@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philosophing.c                                     :+:      :+:    :+:   */
+/*   philosophing_routine.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: user42 <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/18 21:34:02 by user42            #+#    #+#             */
-/*   Updated: 2020/07/18 21:42:08 by user42           ###   ########.fr       */
+/*   Updated: 2020/07/27 20:36:18 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@ static void	meals_checker(void)
 {
 	unsigned int i;
 
+	if (g_s.meals_option <= 0)
+		return ;
 	i = 0;
 	while (g_s.meals_count[i] >= g_s.meals_option)
 		i++;
@@ -27,9 +29,8 @@ void		end_checker(void)
 	unsigned int	i;
 	struct timeval	now;
 
-	while (g_s.stop == FALSE)
+	while (g_s.stop == FALSE && (i = -1))
 	{
-		i = -1;
 		while (++i < g_s.n)
 		{
 			sem_wait(g_s.eating[i]);
@@ -48,8 +49,7 @@ void		end_checker(void)
 			}
 			sem_post(g_s.eating[i]);
 		}
-		if (g_s.meals_option > 0)
-			meals_checker();
+		meals_checker();
 	}
 }
 

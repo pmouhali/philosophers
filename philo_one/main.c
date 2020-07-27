@@ -6,7 +6,7 @@
 /*   By: pmouhali <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/17 14:36:02 by pmouhali          #+#    #+#             */
-/*   Updated: 2020/07/18 12:37:00 by user42           ###   ########.fr       */
+/*   Updated: 2020/07/27 20:23:46 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,16 +15,13 @@
 static void	take_forks_and_eat(unsigned char n)
 {
 	pthread_mutex_lock(&(g_s.eat_sync[n - 1]));
-	
 	g_s.table[left_fork(n)] = 0;
 	g_s.table[right_fork(n)] = 0;
 	message(n, TAKING_FORK);
 	message(n, TAKING_FORK);
-	
 	gettimeofday(&(g_s.meals_time[n - 1]), NULL);
 	pthread_mutex_unlock(&(g_s.eat_sync[n - 1]));
 	message(n, EATING);
-//	usleep(g_s.time_to_eat * 1000);
 	ft_sleep(g_s.time_to_eat);
 }
 
@@ -51,7 +48,6 @@ void		*philosophing(void *arg)
 			putdown_forks(n);
 			g_s.meals_count[n - 1] += 1;
 			message(n, SLEEPING);
-		//	usleep(g_s.time_to_sleep * 1000);
 			ft_sleep(g_s.time_to_sleep);
 			message(n, THINKING);
 			usleep(90);

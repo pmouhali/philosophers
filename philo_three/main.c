@@ -6,14 +6,14 @@
 /*   By: user42 <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/18 22:05:17 by user42            #+#    #+#             */
-/*   Updated: 2020/07/18 22:13:36 by user42           ###   ########.fr       */
+/*   Updated: 2020/07/27 21:24:59 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
 struct timeval	g_last_meal;
-unsigned int g_n_meals;
+unsigned int g_n_meals = 0;
 sem_t *g_eating;
 sem_t *g_forks;
 sem_t *g_death;

@@ -6,13 +6,13 @@
 /*   By: user42 <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/18 12:28:50 by user42            #+#    #+#             */
-/*   Updated: 2020/07/18 12:34:37 by user42           ###   ########.fr       */
+/*   Updated: 2020/07/27 20:18:41 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-static int		validates_parameters(t_simulation_data *sim, int ac, char **av)
+static int	validates_parameters(t_simulation_data *sim, int ac, char **av)
 {
 	int r;
 
@@ -30,7 +30,7 @@ static int		validates_parameters(t_simulation_data *sim, int ac, char **av)
 	return (r);
 }
 
-int		simulation_init(t_simulation_data *sim, int ac, char **av)
+int			simulation_init(t_simulation_data *sim, int ac, char **av)
 {
 	unsigned int i;
 
@@ -56,7 +56,7 @@ int		simulation_init(t_simulation_data *sim, int ac, char **av)
 	return (0);
 }
 
-void	simulation_end(t_simulation_data *g_s)
+void		simulation_end(t_simulation_data *g_s)
 {
 	unsigned int i;
 
@@ -68,7 +68,7 @@ void	simulation_end(t_simulation_data *g_s)
 		pthread_mutex_destroy(&(g_s->eat_sync[i]));
 }
 
-void	start_threads(pthread_t *tids, unsigned int n)
+void		start_threads(pthread_t *tids, unsigned int n)
 {
 	unsigned char	number[MAX_PHILOS + 1];
 	unsigned int	i;
@@ -81,7 +81,7 @@ void	start_threads(pthread_t *tids, unsigned int n)
 	}
 }
 
-void	wait_threads(pthread_t *tids, unsigned int n)
+void		wait_threads(pthread_t *tids, unsigned int n)
 {
 	unsigned int i;
 

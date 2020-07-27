@@ -6,7 +6,7 @@
 /*   By: user42 <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/18 22:06:23 by user42            #+#    #+#             */
-/*   Updated: 2020/07/18 22:14:37 by user42           ###   ########.fr       */
+/*   Updated: 2020/07/27 21:04:00 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ void	*philosophing(void *arg)
 		philosopher_eat(n, &g_last_meal);
 		philosopher_sleep(n);
 		message(n, THINKING);
-		usleep(90);
+		ft_sleep(5);
 	}
 	return (NULL);
 }

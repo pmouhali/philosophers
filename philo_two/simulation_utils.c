@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   simulation_utils.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: user42 <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/18 21:26:02 by user42            #+#    #+#             */
-/*   Updated: 2020/07/18 21:43:50 by user42           ###   ########.fr       */
+/*   Updated: 2020/07/27 20:38:33 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,15 @@
 
 static void	clear_semaphores(void)
 {
-	unsigned int i;
-	char *semkey;
+	unsigned int	i;
+	char			*semkey;
 
 	sem_unlink(SEMFORKS);
 	sem_close(g_forks);
 	i = 0;
 	while (i < g_s.n)
 	{
-		semkey = ft_strjoin_free("eating_", ft_itoa(i), 2);	
+		semkey = ft_strjoin_free("eating_", ft_itoa(i), 2);
 		sem_unlink(semkey);
 		sem_close(g_s.eating[i]);
 		free(semkey);
@@ -30,15 +30,15 @@ static void	clear_semaphores(void)
 	}
 }
 
-static void create_eating_semaphores(t_simulation_data *s)
+static void	create_eating_semaphores(t_simulation_data *s)
 {
-	unsigned int i;
-	char *semkey;
+	unsigned int	i;
+	char			*semkey;
 
 	i = 0;
 	while (i < s->n)
 	{
-		semkey = ft_strjoin_free("eating_", ft_itoa(i), 2);	
+		semkey = ft_strjoin_free("eating_", ft_itoa(i), 2);
 		s->eating[i] = sem_open(semkey, O_CREAT, 0666, 1);
 		free(semkey);
 		i++;
@@ -72,8 +72,8 @@ int			simulation_init(t_simulation_data *sim, int ac, char **av)
 	clear_semaphores();
 	memset(sim->eating, 0, sizeof(sem_t) * (sim->n + 1));
 	create_eating_semaphores(sim);
-	gettimeofday(&(sim->start), NULL);
 	sim->meals_time = malloc(sizeof(*(sim->meals_time)) * (sim->n + 1));
+	gettimeofday(&(sim->start), NULL);
 	i = 0;
 	while (i < sim->n)
 	{

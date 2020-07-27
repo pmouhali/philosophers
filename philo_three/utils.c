@@ -6,7 +6,7 @@
 /*   By: user42 <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/18 22:15:40 by user42            #+#    #+#             */
-/*   Updated: 2020/07/18 22:18:34 by user42           ###   ########.fr       */
+/*   Updated: 2020/07/27 21:28:42 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,10 @@
 
 void	simulation_delete(void *t1)
 {
-/* ******************************** */
-	unsigned int i = 0;
-	char *semkey;
+	unsigned int	i;
+	char			*semkey;
 
+	i = 0;
 	while (i < g_s.n)
 	{
 		semkey = ft_strjoin_free("eating_", ft_itoa(i), 2);
@@ -27,7 +27,6 @@ void	simulation_delete(void *t1)
 		free(semkey);
 		i++;
 	}
-/* ******************************** */
 	free(t1);
 	sem_unlink(SEMFORKS);
 	sem_close(g_forks);
@@ -85,20 +84,15 @@ void	child_process_actions(unsigned int n)
 {
 	pthread_t		tid;
 	struct timeval	now;
-
 	char			*semkey;
 
 	semkey = ft_strjoin_free("eating_", ft_itoa(n - 1), 2);
 	sem_unlink(semkey);
-	sem_close(g_eating); // useless maybe ?
 	if ((g_eating = sem_open(semkey, O_CREAT, S_IRWXU, 1)) == SEM_FAILED)
-		exit (EXIT_FAILURE);
+		exit(EXIT_FAILURE);
 	free(semkey);
-
-	gettimeofday(&g_last_meal, NULL);
-	//g_last_meal = g_s.start;
-	g_n_meals = 0;
 	pthread_create(&tid, NULL, philosophing, &n);
+	gettimeofday(&g_last_meal, NULL);
 	while (TRUE)
 	{
 		sem_wait(g_eating);
@@ -111,15 +105,15 @@ void	child_process_actions(unsigned int n)
 			return ;
 		}
 		sem_post(g_eating);
-		usleep(100);
+		ft_sleep(5);
 	}
 }
 
 void	*count_meals_routine(void *arg)
 {
 	unsigned int	i;
-	(void)arg;
 
+	(void)arg;
 	i = 0;
 	while (i < g_s.n)
 	{
