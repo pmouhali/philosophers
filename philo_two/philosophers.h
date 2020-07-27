@@ -52,6 +52,7 @@ typedef struct	s_simulation_data
 	unsigned int	meals_option;
 	unsigned char	*meals_count;
 	struct timeval	*meals_time;
+	sem_t			**eating;
 
 }				t_simulation_data;
 
@@ -70,5 +71,7 @@ void			create_threads(pthread_t *threads_ids, int *philosopher_ids);
 void			*philosophing(void *arg);
 void			wait_threads(pthread_t *thread_ids);
 void			end_checker(void);
+char			*ft_strjoin_free(char *s1, char *s2, int c);
+char			*ft_itoa(int n);
 
 #endif

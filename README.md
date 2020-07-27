@@ -16,6 +16,8 @@ https://linux.die.net/man/3/pthread_mutex_init
 
 ### philo_two : threads et semaphores
 
+Linux systems: les fichiers des semaphores sont situés dans le dossier /dev/shm
+
 Semaphores with Threads:
 https://mtodorovic.developpez.com/linux/programmation-avancee/?page=page_4#L4-4-5
 

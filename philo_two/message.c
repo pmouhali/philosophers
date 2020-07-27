@@ -38,7 +38,7 @@ static void	*ft_memmove(void *dest, const void *src, size_t n)
 	return (dest);
 }
 
-static int	ft_itoa(int n, char *str)
+static int	ft_itoa_chelou(int n, char *str)
 {
 	int		i;
 	int		j;
@@ -99,7 +99,7 @@ void		message(int n, int state)
 	ft_ultoa(elapsed_time(g_s.start, now), &msg[1]);
 	msg[21] = ']';
 	msg[22] = ' ';
-	len = ft_itoa(n, &msg[23]);
+	len = ft_itoa_chelou(n, &msg[23]);
 	ft_memmove(&msg[23 + len], strs[state], ft_strlen(strs[state]) + 1);
 	write(1, msg, ft_strlen(msg));
 }

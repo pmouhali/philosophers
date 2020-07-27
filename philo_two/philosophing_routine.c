@@ -32,6 +32,7 @@ void		end_checker(void)
 		i = -1;
 		while (++i < g_s.n)
 		{
+			sem_wait(g_s.eating[i]);
 			gettimeofday(&now, NULL);
 			if (elapsed_time(g_s.meals_time[i], now) > g_s.time_to_die)
 			{
@@ -39,9 +40,13 @@ void		end_checker(void)
 				message(i + 1, DEAD);
 				i = -1;
 				while (++i < g_s.n)
+				{
 					sem_post(g_forks);
+					sem_post(g_s.eating[i]);
+				}
 				return ;
 			}
+			sem_post(g_s.eating[i]);
 		}
 		if (g_s.meals_option > 0)
 			meals_checker();
@@ -61,7 +66,9 @@ void		*philosophing(void *arg)
 		message(*(int*)arg + 1, TAKING_FORK);
 		g_s.meals_count[*(int*)arg] += 1;
 		message(*(int*)arg + 1, EATING);
+		sem_wait(g_s.eating[*(int*)arg]);
 		gettimeofday(&last_meal, NULL);
+		sem_post(g_s.eating[*(int*)arg]);
 		g_s.meals_time[*(int*)arg] = last_meal;
 		ft_sleep(g_s.time_to_eat);
 		sem_post(g_forks);
